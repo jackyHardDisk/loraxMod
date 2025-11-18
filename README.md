@@ -14,6 +14,8 @@ loraxMod eliminates duplication of tree-sitter infrastructure across projects by
 
 ## Supported Languages
 
+All languages use tree-sitter WASM grammars - no native compilation required.
+
 - **JavaScript/TypeScript** (.js, .jsx, .ts, .tsx, .mjs, .cjs)
 - **Python** (.py)
 - **PowerShell** (.ps1, .psm1, .psd1)
@@ -27,7 +29,7 @@ loraxMod eliminates duplication of tree-sitter infrastructure across projects by
 ```bash
 # Place loraxMod adjacent to your project
 cd ../loraxMod
-npm install
+npm install  # Installs only web-tree-sitter (~5.7 MB)
 
 # Your project automatically finds it via relative path
 ```
@@ -35,7 +37,7 @@ npm install
 ### Method 2: npm link (Recommended)
 ```bash
 cd loraxMod
-npm install
+npm install  # Single dependency: web-tree-sitter
 npm link
 
 cd ../your-project
@@ -247,6 +249,7 @@ loraxMod/
 2. **Composition**: Modular extractors registered via plugin pattern
 3. **Backward Compatible**: Drop-in replacement for existing parsers
 4. **Sparse Clone Friendly**: Minimal dependencies for grammar-only usage
+5. **Zero Native Dependencies**: Pure WASM - no compilation, cross-platform
 
 ## Building Grammars
 

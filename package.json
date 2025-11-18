@@ -24,10 +24,6 @@
   "dependencies": {
     "web-tree-sitter": "^0.25.0"
   },
-  "peerDependencies": {
-    "acorn": "^8.11.2",
-    "acorn-walk": "^8.3.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/yourusername/loraxMod.git"
