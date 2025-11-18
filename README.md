@@ -257,21 +257,40 @@ Pre-compiled WASM grammars are included. Only rebuild if you need to update or c
 
 ### Prerequisites
 - tree-sitter CLI: `npm install -g tree-sitter-cli@0.25.9`
-- Emscripten SDK (included in `emsdk/`)
+- Emscripten SDK: Install to `C:\tools\emsdk` (Windows) or `/usr/local/emsdk` (Linux)
 
-### Windows
+**Install emsdk (one-time setup):**
+```bash
+# Windows
+cd C:\tools
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+emsdk install latest
+emsdk activate latest
+
+# Linux/macOS
+cd /usr/local  # or ~/
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+./emsdk install latest
+./emsdk activate latest
+```
+
+### Build Grammars
+
+**Windows:**
 ```bash
 # Activate emsdk
-powershell.exe -ExecutionPolicy Bypass -File emsdk/emsdk_env.ps1
+powershell.exe -ExecutionPolicy Bypass -File C:\tools\emsdk\emsdk_env.ps1
 
 # Build all grammars
 bash build/build-grammar.sh
 ```
 
-### Linux/macOS
+**Linux/macOS:**
 ```bash
 # Activate emsdk
-source emsdk/emsdk_env.sh
+source /usr/local/emsdk/emsdk_env.sh
 
 # Build all grammars
 bash build/build-grammar.sh

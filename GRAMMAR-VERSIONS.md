@@ -89,13 +89,41 @@ powershell.exe -ExecutionPolicy Bypass -File Track-CodeEvolution.ps1 -ClassName 
 
 ## How to Update Grammars
 
+### Prerequisites: Install emsdk
+
+emsdk is **not** included in loraxMod. Install it once to `C:\tools\emsdk`:
+
+**Windows:**
+```powershell
+# Clone to C:\tools
+cd C:\tools
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+
+# Install and activate
+emsdk install latest
+emsdk activate latest
+```
+
+**Linux/macOS:**
+```bash
+# Clone to /usr/local or ~/emsdk
+cd /usr/local  # or cd ~
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+
+# Install and activate
+./emsdk install latest
+./emsdk activate latest
+```
+
 ### Automated Update (Recommended)
 
 Use the build script to rebuild all grammars from latest sources:
 
 ```bash
 # 1. Activate emsdk (Windows)
-powershell.exe -ExecutionPolicy Bypass -File loraxMod/emsdk/emsdk_env.ps1
+powershell.exe -ExecutionPolicy Bypass -File C:\tools\emsdk\emsdk_env.ps1
 
 # 2. Run build script (rebuilds all grammars)
 bash loraxMod/build/build-grammar.sh

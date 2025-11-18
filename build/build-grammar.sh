@@ -7,7 +7,6 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 LORAX_ROOT="$(dirname "$SCRIPT_DIR")"
 GRAMMARS_DIR="$LORAX_ROOT/grammars"
-EMSDK_DIR="$LORAX_ROOT/emsdk"
 TEMP_DIR="$LORAX_ROOT/build/temp"
 
 echo "loraxMod Grammar Builder"
@@ -21,12 +20,34 @@ if ! command -v tree-sitter &> /dev/null; then
     exit 1
 fi
 
-# Check for emsdk
-if [ ! -d "$EMSDK_DIR" ]; then
-    echo "ERROR: emsdk not found at $EMSDK_DIR"
-    echo "Run: git submodule update --init --recursive"
+# Find emsdk installation
+EMSDK_DIR=""
+if [ -d "/c/tools/emsdk" ]; then
+    EMSDK_DIR="/c/tools/emsdk"
+elif [ -d "/usr/local/emsdk" ]; then
+    EMSDK_DIR="/usr/local/emsdk"
+elif [ -d "$HOME/emsdk" ]; then
+    EMSDK_DIR="$HOME/emsdk"
+elif [ -n "$EMSDK_ROOT" ] && [ -d "$EMSDK_ROOT" ]; then
+    EMSDK_DIR="$EMSDK_ROOT"
+fi
+
+if [ -z "$EMSDK_DIR" ]; then
+    echo "ERROR: emsdk not found"
+    echo "Install to one of these locations:"
+    echo "  Windows: C:\\tools\\emsdk"
+    echo "  Linux:   /usr/local/emsdk or ~/emsdk"
+    echo "  Or set EMSDK_ROOT environment variable"
+    echo ""
+    echo "Installation:"
+    echo "  git clone https://github.com/emscripten-core/emsdk.git [location]"
+    echo "  cd emsdk"
+    echo "  ./emsdk install latest"
+    echo "  ./emsdk activate latest"
     exit 1
 fi
+
+echo "Using emsdk from: $EMSDK_DIR"
 
 # Activate emsdk (on Windows, use PowerShell script instead)
 if [[ "$OSTYPE" == "msys" || "$OSTYPE" == "win32" ]]; then
