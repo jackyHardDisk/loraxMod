@@ -70,6 +70,7 @@ declare -A GRAMMARS=(
     ["powershell"]="https://github.com/Airbus-CERT/tree-sitter-powershell"
     ["r"]="https://github.com/r-lib/tree-sitter-r"
     ["c-sharp"]="https://github.com/tree-sitter/tree-sitter-c-sharp"
+    ["rust"]="https://github.com/tree-sitter/tree-sitter-rust"
 )
 
 # Export function names (most use _tree_sitter_<lang>, powershell uses lowercase)
@@ -80,6 +81,7 @@ declare -A EXPORTS=(
     ["powershell"]="_tree_sitter_powershell"
     ["r"]="_tree_sitter_r"
     ["c-sharp"]="_tree_sitter_c_sharp"
+    ["rust"]="_tree_sitter_rust"
 )
 
 # Build each grammar

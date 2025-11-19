@@ -14,6 +14,7 @@ Last updated: **November 2025**
 | PowerShell | [Airbus-CERT/tree-sitter-powershell](https://github.com/Airbus-CERT/tree-sitter-powershell) | Latest (main) | 15 | PowerShell 5.1+ |
 | R          | [r-lib/tree-sitter-r](https://github.com/r-lib/tree-sitter-r) | Latest (main) | 15 | R6, S3, S4 classes |
 | C#         | [tree-sitter/tree-sitter-c-sharp](https://github.com/tree-sitter/tree-sitter-c-sharp) | Latest (main) | 15 | C# 12 features |
+| Rust       | [tree-sitter/tree-sitter-rust](https://github.com/tree-sitter/tree-sitter-rust) | Latest (main) | 15 | Rust 2021 edition |
 
 ## Grammar Details
 
@@ -53,6 +54,12 @@ Last updated: **November 2025**
 - **Supports:** C# 12 and earlier
 - **WASM Size:** 4.9 MB (largest due to language complexity)
 - **Update Frequency:** Active development
+
+### Rust
+- **Source:** Official tree-sitter grammar
+- **Supports:** Rust 2021 edition, all core language features
+- **WASM Size:** TBD (to be built)
+- **Update Frequency:** Active development by tree-sitter team
 
 ## How to Check for Updates
 
