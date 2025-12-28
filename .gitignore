@@ -53,6 +53,9 @@ deprecated/
 # pytest cache
 .pytest_cache/
 
+# Drafts
+drafts/
+
 # C# build artifacts
 loraxMod-cs/**/bin/
 loraxMod-cs/**/obj/
