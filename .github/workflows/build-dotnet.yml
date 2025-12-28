@@ -95,3 +95,40 @@ jobs:
 
       - name: Publish to NuGet
         run: dotnet nuget push ./nupkg/*.nupkg --api-key ${{ secrets.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/cs-v')
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: nuget-package
+          path: ./nupkg
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/cs-v}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "C# v${{ steps.version.outputs.version }}"
+          body: |
+            ## LoraxMod (C#) v${{ steps.version.outputs.version }}
+
+            Install from NuGet:
+            ```
+            dotnet add package LoraxMod --version ${{ steps.version.outputs.version }}
+            ```
+
+            See [Release Notes](https://github.com/${{ github.repository }}/blob/master/loraxMod-cs/CHANGELOG.md) for details.
+          files: nupkg/*.nupkg
+          draft: false
+          prerelease: false

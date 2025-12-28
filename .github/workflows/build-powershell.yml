@@ -99,3 +99,49 @@ jobs:
           $modulePath = Resolve-Path "./LoraxMod"
           Write-Host "Publishing from: $modulePath"
           Publish-Module -Path $modulePath -NuGetApiKey $env:POWERSHELL_GALLERY_KEY -Verbose
+
+  release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/ps-v')
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: powershell-module
+          path: ./LoraxMod
+
+      - name: Create module zip
+        run: zip -r LoraxMod-PowerShell.zip LoraxMod/
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/ps-v}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "PowerShell v${{ steps.version.outputs.version }}"
+          body: |
+            ## LoraxMod (PowerShell) v${{ steps.version.outputs.version }}
+
+            Install from PowerShell Gallery:
+            ```powershell
+            Install-Module LoraxMod -Scope CurrentUser
+            ```
+
+            Or download the zip and import manually:
+            ```powershell
+            Expand-Archive LoraxMod-PowerShell.zip -DestinationPath $env:PSModulePath.Split(';')[0]
+            Import-Module LoraxMod
+            ```
+
+            See [Release Notes](https://github.com/${{ github.repository }}/blob/master/powershellMod/LoraxMod.psd1) for details.
+          files: LoraxMod-PowerShell.zip
+          draft: false
+          prerelease: false

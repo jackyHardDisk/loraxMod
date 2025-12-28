@@ -81,3 +81,40 @@ jobs:
         with:
           packages-dir: dist/
           password: ${{ secrets.PYPI_API_TOKEN }}
+
+  release:
+    name: Create GitHub Release
+    needs: publish
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/py-v')
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF#refs/tags/py-v}" >> $GITHUB_OUTPUT
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: "Python v${{ steps.version.outputs.version }}"
+          body: |
+            ## loraxmod v${{ steps.version.outputs.version }}
+
+            Install from PyPI:
+            ```
+            pip install loraxmod==${{ steps.version.outputs.version }}
+            ```
+
+            See [CHANGELOG](https://github.com/${{ github.repository }}/blob/master/loraxMod-py/CHANGELOG.md) for details.
+          files: dist/*
+          draft: false
+          prerelease: false
