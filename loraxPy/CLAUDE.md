@@ -1,4 +1,4 @@
-# loraxMod-py
+# loraxPy
 
 Python binding for LoraxMod AST parsing. Uses tree-sitter-language-pack for parsers, fetches schemas from GitHub.
 
