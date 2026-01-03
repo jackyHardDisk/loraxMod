@@ -8,6 +8,9 @@ on:
       - 'loraxMod-cs/**'
       - '!loraxMod-cs/tests/**'
 
+permissions:
+  contents: write
+
 jobs:
   sync:
     name: Rebuild and commit DLLs
