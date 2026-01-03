@@ -9,7 +9,7 @@
 
     <!-- NuGet Package Metadata -->
     <PackageId>LoraxMod</PackageId>
-    <Version>1.0.4</Version>
+    <Version>1.0.5</Version>
     <Authors>jackyHardDisk</Authors>
     <Company>jackyHardDisk</Company>
     <Description>Schema-driven AST parsing and semantic diff for 28+ languages. Uses TreeSitter.DotNet for native parsing, reads node-types.json schemas dynamically. Includes PowerShell cmdlets for batch processing.</Description>
@@ -44,6 +44,19 @@
     <Compile Remove="tests\**\*.cs" />
     <EmbeddedResource Remove="tests\**\*" />
     <None Remove="tests\**\*" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Bundle schemas in NuGet package - copied to output on build -->
+    <Content Include="schemas\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <Pack>true</Pack>
+      <PackagePath>contentFiles\any\any\schemas;content\schemas</PackagePath>
+    </Content>
+    <ContentWithTargetPath Include="schemas\**\*.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <TargetPath>schemas\%(RecursiveDir)%(Filename)%(Extension)</TargetPath>
+    </ContentWithTargetPath>
   </ItemGroup>
 
 </Project>
