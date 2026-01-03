@@ -7,6 +7,7 @@ on:
     paths:
       - 'loraxMod-cs/**'
       - '!loraxMod-cs/tests/**'
+  workflow_dispatch:
 
 permissions:
   contents: write
