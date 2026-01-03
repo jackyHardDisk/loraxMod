@@ -1,5 +1,5 @@
 @{
-    ModuleVersion = '1.0.2'
+    ModuleVersion = '1.0.3'
     GUID = '8a3f7d92-4e1c-4b5a-9f2e-6d8c1a3b7f4e'
     Author = 'jackyHardDisk'
     CompanyName = 'jackyHardDisk'
@@ -37,6 +37,13 @@
             LicenseUri = 'https://github.com/jackyHardDisk/loraxMod/blob/master/LICENSE'
             ProjectUri = 'https://github.com/jackyHardDisk/loraxMod'
             ReleaseNotes = @'
+## v1.0.3 - Bundled Schemas
+
+Fixes:
+- Bundled node-types.json schemas for all 28 languages
+- No network fetch required for C#, QL, TSQ, embedded-template (missing from tree-sitter-language-pack)
+- Schema lookup: bundled -> SchemaCache -> local grammars
+
 ## v1.0.2 - License Compliance
 
 Additions:

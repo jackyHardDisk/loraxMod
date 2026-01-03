@@ -105,70 +105,82 @@ namespace LoraxMod
                     $"python, rust, typescript, etc. Error: {ex.Message}", ex);
             }
 
-            // Load schema
+            // Load schema with fallback chain:
+            // 1. Explicit path (if provided)
+            // 2. Bundled schemas in ../schemas/ (relative to assembly)
+            // 3. SchemaCache (fetches from GitHub)
+            // 4. Local grammars in ../../grammars/ (dev environment)
             SchemaReader? schema = null;
+            var assemblyDir = Path.GetDirectoryName(typeof(Parser).Assembly.Location) ?? "";
+
             if (schemaPath != null)
             {
                 schema = SchemaReader.FromFile(schemaPath);
             }
             else
             {
-                // Try to fetch from SchemaCache with original language ID
-                try
+                // Try bundled schemas first (most reliable, no network needed)
+                // Assembly is in powershellMod/bin/, schemas are in ../schemas/
+                var bundledPath = Path.Combine(assemblyDir, "..", "schemas", $"{language}.json");
+                if (File.Exists(bundledPath))
                 {
-                    var cachedPath = await SchemaCache.GetSchemaPathAsync(language);
-                    schema = SchemaReader.FromFile(cachedPath);
+                    schema = SchemaReader.FromFile(bundledPath);
                 }
-                catch
+
+                // Try SchemaCache (fetches from tree-sitter-language-pack)
+                if (schema == null)
                 {
-                    // If original failed, try with TreeSitter.DotNet ID (e.g., "c-sharp" for "csharp")
-                    if (tsLanguageId != language)
+                    try
                     {
-                        try
-                        {
-                            var cachedPath = await SchemaCache.GetSchemaPathAsync(tsLanguageId);
-                            schema = SchemaReader.FromFile(cachedPath);
-                        }
-                        catch
-                        {
-                            // Continue to local grammars fallback
-                        }
+                        var cachedPath = await SchemaCache.GetSchemaPathAsync(language);
+                        schema = SchemaReader.FromFile(cachedPath);
                     }
-
-                    // If still not found, try local grammars directory
-                    if (schema == null)
+                    catch
                     {
-                        // Get assembly directory, then navigate to grammars/
-                        // Assembly is in powershellMod/bin/, grammars are in ../../grammars/
-                        var assemblyDir = Path.GetDirectoryName(typeof(Parser).Assembly.Location);
-                        if (!string.IsNullOrEmpty(assemblyDir))
+                        // If original failed, try with TreeSitter.DotNet ID (e.g., "c-sharp" for "csharp")
+                        if (tsLanguageId != language)
                         {
-                            var grammarsRoot = Path.Combine(assemblyDir, "..", "..", "grammars");
-
-                            // Try with original ID
-                            var defaultSchemaPath = Path.Combine(grammarsRoot, $"tree-sitter-{language}", "src", "node-types.json");
-                            if (File.Exists(defaultSchemaPath))
+                            try
                             {
-                                schema = SchemaReader.FromFile(defaultSchemaPath);
+                                var cachedPath = await SchemaCache.GetSchemaPathAsync(tsLanguageId);
+                                schema = SchemaReader.FromFile(cachedPath);
                             }
-                            else if (tsLanguageId != language)
+                            catch
                             {
-                                // Try with TreeSitter.DotNet ID (e.g., "tree-sitter-c-sharp")
-                                defaultSchemaPath = Path.Combine(grammarsRoot, $"tree-sitter-{tsLanguageId}", "src", "node-types.json");
-                                if (File.Exists(defaultSchemaPath))
-                                {
-                                    schema = SchemaReader.FromFile(defaultSchemaPath);
-                                }
+                                // Continue to local grammars fallback
                             }
                         }
+                    }
+                }
 
-                        // If still not found, throw
-                        if (schema == null)
+                // Try local grammars directory (dev environment)
+                if (schema == null)
+                {
+                    var grammarsRoot = Path.Combine(assemblyDir, "..", "..", "grammars");
+
+                    // Try with original ID
+                    var defaultSchemaPath = Path.Combine(grammarsRoot, $"tree-sitter-{language}", "src", "node-types.json");
+                    if (File.Exists(defaultSchemaPath))
+                    {
+                        schema = SchemaReader.FromFile(defaultSchemaPath);
+                    }
+                    else if (tsLanguageId != language)
+                    {
+                        // Try with TreeSitter.DotNet ID (e.g., "tree-sitter-c-sharp")
+                        defaultSchemaPath = Path.Combine(grammarsRoot, $"tree-sitter-{tsLanguageId}", "src", "node-types.json");
+                        if (File.Exists(defaultSchemaPath))
                         {
-                            throw new FileNotFoundException(
-                                $"Schema not found for '{language}' (or '{tsLanguageId}'). Tried SchemaCache and local grammars relative to assembly.");
+                            schema = SchemaReader.FromFile(defaultSchemaPath);
                         }
                     }
+                }
+
+                // If still not found, throw
+                if (schema == null)
+                {
+                    throw new FileNotFoundException(
+                        $"Schema not found for '{language}' (or '{tsLanguageId}'). " +
+                        $"Tried: bundled schemas, SchemaCache, and local grammars relative to assembly at {assemblyDir}");
                 }
             }
 
